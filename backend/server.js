@@ -21,9 +21,31 @@ app.get('/', (req, res) => {
     res.render('home', {title: "Welcome"});
 });
 
+comments = [
+    {
+        'name': 'Guest',
+        'content': "Lorem ipsum dolor sit amet",
+        'created': "10-29-25 1:24 PM"
+    },
+    {
+        'name': 'Pi',
+        'content': "3.14159265358",
+        'created': "3-14-15 3:14 PM"
+    },
+    {
+        'name': 'Lora',
+        'content': "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        'created': "1-1-1970 12:00 AM"
+    }
+]
+
+app.get('/comments', (req, res) => {
+    res.render('comments', {comments: comments, title: "Comments"});
+});
+
 // 404 handler
 app.use((req, res) => {
-    res.render('404', {title: "404 Not Found", "url": req.path})
+    res.status(404).render('404', {title: "404 Not Found", "url": req.path})
 })
 
 // Start server

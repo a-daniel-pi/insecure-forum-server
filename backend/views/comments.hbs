@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <title>{{title}}</title>
+</head>
+<body>
+    {{> header title=title}}
+    
+    <article>
+        {{#each comments}}
+            {{> comment name=name content=content created=created}}
+        {{/each}}
+    </article>
+</body>
+</html>

@@ -1,9 +1,9 @@
 body {
-    background-color: skyblue;
+    background-color: #A2C7E5;
 }
 
 nav {
-    background-color: white;
+    background-color: #FF99C9;
     padding: 10px;
     border-radius: 5px;
     text-align: center;
@@ -11,8 +11,7 @@ nav {
 }
 
 article {
-    background-color: lightgreen;
-    box-shadow: 5px 2px blue;
+    background-color: #DCEAB2;
     margin: auto;
     margin-top: 10px;
     width: 50%;
@@ -27,18 +26,23 @@ img {
 
 .navlink {
     text-decoration-line: none;
-    color: blue;
+    color: #DCEAB2;
     float: none;
+    margin: 5px 20px;
 }
 
 .title {
     text-align: center;
 }
 
-#home {
-    text-align: center;
-    margin: auto;
-    padding-left: 10px;
-    padding-right: 10px;
-    display: inline-block;
+.comment {
+    border-radius: 10px;
+    background-color: blue;
+    margin: 20px 20px;
+    padding: 10px;
+}
+
+.username {
+    font-size: 20px;
+    padding: 0px;
 }
