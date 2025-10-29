@@ -21,6 +21,11 @@ app.get('/', (req, res) => {
     res.render('home', {title: "Welcome"});
 });
 
+// 404 handler
+app.use((req, res) => {
+    res.render('404', {title: "404 Not Found", "url": req.path})
+})
+
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
