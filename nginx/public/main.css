@@ -1,0 +1,44 @@
+body {
+    background-color: skyblue;
+}
+
+nav {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+}
+
+article {
+    background-color: lightgreen;
+    box-shadow: 5px 2px blue;
+    margin: auto;
+    margin-top: 10px;
+    width: 50%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+img {
+    display: block;
+    margin: auto;
+}
+
+.navlink {
+    text-decoration-line: none;
+    color: blue;
+    float: none;
+}
+
+.title {
+    text-align: center;
+}
+
+#home {
+    text-align: center;
+    margin: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: inline-block;
+}

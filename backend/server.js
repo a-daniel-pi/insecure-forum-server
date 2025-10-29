@@ -1,23 +1,23 @@
 const express = require('express');
+const hbs = require('hbs');
+const path = require('path');
+
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+
+// Configure Handlebars
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Register partials directory
+hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-    res.json({ 
-        message: 'Hello from the API!',
-        timestamp: new Date().toISOString()
-    });
-});
-
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'healthy',
-        service: 'nodejs-backend'
-    });
+    res.render('home', {title: "Welcome"});
 });
 
 // Start server
