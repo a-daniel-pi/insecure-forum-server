@@ -15,6 +15,7 @@ hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.render('home', {title: "Welcome"});
