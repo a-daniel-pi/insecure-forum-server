@@ -18,11 +18,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.render('home', {title: "Welcome"});
+    res.render('home', {});
 });
 
 app.get('/login', (req, res) => {
-    res.render('login', {title: "Log In"});
+    res.render('login', {});
 });
 
 comments = [
@@ -44,12 +44,12 @@ comments = [
 ]
 
 app.get('/comments', (req, res) => {
-    res.render('comments', {comments: comments, title: "Comments"});
+    res.render('comments', {comments: comments});
 });
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).render('404', {title: "404 Not Found", "url": req.path})
+    res.status(404).render('404', {"url": req.path})
 })
 
 // Start server
