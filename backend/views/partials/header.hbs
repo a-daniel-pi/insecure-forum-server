@@ -1,6 +1,15 @@
 <nav>
+    <p class="hello">Hello, {{@root.user.name}}</p>
     <a href="/" class="navlink">Home</a>
     <a href="/comments" class="navlink">Comments</a>
+    {{#if @root.user.isLoggedIn}}
+        <form action="/logout" method="POST" class="logout">
+            <button type="submit" class="log">Log Out</button>
+        </form>
+    {{/if}}
+    {{#unless @root.user.isLoggedIn}}
+        <a href="/login" class="log">Log In</a>
+    {{/unless}}
 </nav>
 
 <h1 class="title">{{title}}</h1>
