@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <title>New Comment</title>
+</head>
+<body>
+    {{> header title="New Comment"}}
+    
+    <article>
+        <div class="form">
+        <form action="http://167.71.173.97:8080/comment" method="POST">
+            <p>Username</p>
+            <textarea name="content"/></textarea>
+            <br />
+            <button type="submit">Create Comment</button>
+        </form>
+        </div>
+</body>
+</html>

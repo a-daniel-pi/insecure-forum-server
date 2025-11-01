@@ -8,6 +8,7 @@
     {{> header title="Comments"}}
     
     <article>
+        <a href="/comments/new">Make a New Comment</a>
         {{#each comments}}
             {{> comment name=name content=content created=created}}
         {{/each}}
