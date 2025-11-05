@@ -33,7 +33,7 @@ comments = [
     {
         'name': 'system',
         'content': "Welcome to this new site.",
-        'created': "10-29-25 1:24 PM"
+        'created': new Date().toDateString()
     }
 ];
 
@@ -154,7 +154,7 @@ app.post('/comment', (req, res) => {
     }
     comments.push({'name': user.name,
         'content': req.body.content,
-        'created': "Not supported yet"
+        'created': new Date().toDateString()
     });
     res.redirect('/comments');
 });
