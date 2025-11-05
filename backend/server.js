@@ -37,7 +37,7 @@ comments = [
     }
 ];
 
-users = {'daniel': {password: 'admin'}};
+users = {};
 
 function get_user(req) {
     let user = {  // We keep the Guest object to act as a default if there is no session
