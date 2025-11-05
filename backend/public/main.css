@@ -100,3 +100,7 @@ button.log {
     cursor: pointer;
     font: inherit;
 }
+
+.error {
+    color: red;
+}

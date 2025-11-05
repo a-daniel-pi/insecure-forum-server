@@ -31,11 +31,13 @@ app.use(session({
 
 comments = [
     {
-        'name': 'System',
+        'name': 'system',
         'content': "Welcome to this new site.",
         'created': "10-29-25 1:24 PM"
     }
-]
+];
+
+users = {'daniel': {password: 'admin'}};
 
 function get_user(req) {
     let user = {  // We keep the Guest object to act as a default if there is no session
@@ -65,7 +67,7 @@ app.get('/login', (req, res) => {
         res.redirect('/');
     }
     else {
-        res.render('login', {user: get_user(req)});
+        res.render('login', {user: user});
     }
 });
 
@@ -73,7 +75,16 @@ app.post('/login', (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
     
-     if (username && password) {
+    if (!username || !password) {
+        res.render('login', {user: get_user(req), error: "Need to enter username and password"});
+    }
+    else if(users[username] == undefined) {
+        res.render('login', {user: get_user(req), error: "Wrong username or password"});
+    }
+    else if (users[username].password != password) {
+        res.render('login', {user: get_user(req), error: "Wrong username or password"});
+    }
+    else {
         // Set session data
         req.session.isLoggedIn = true;
         req.session.username = username;
@@ -81,10 +92,41 @@ app.post('/login', (req,res) => {
         
         console.log(`User ${username} logged in at ${req.session.loginTime}`);
         res.redirect('/');
-    } else {
-        res.redirect('/login?error=1');
     }
 });
+
+app.get('/register', (req, res) => {
+    user = get_user(req);
+    if(user.isLoggedIn) {
+        res.redirect('/');
+    }
+    else {
+        res.render('register', {user: user, error: ""});
+    }
+});
+
+app.post('/register', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const agreed = req.body.agree;
+    
+    if(!agreed) {
+        res.render('register', {user: get_user(req), error: "You did not agree"});
+    }
+    else if (!username || !password) {
+        res.render('register', {user: get_user(req), error: "Need to enter username and password"});
+    }
+    else if (users[username] != undefined) {
+        res.render('register', {user: get_user(req), error: "Username already taken"})
+    }
+    else {
+        users[username] = {password: password};
+        req.session.isLoggedIn = true;
+        req.session.username = username;
+        req.session.loginTime = new Date().toISOString();
+        res.redirect('/');
+    }
+})
 
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {

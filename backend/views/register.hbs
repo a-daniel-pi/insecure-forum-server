@@ -2,19 +2,22 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/main.css" />
-    <title>Log In</title>
+    <title>New Account</title>
 </head>
 <body>
-    {{> header title="Log In"}}
+    {{> header title="New Account"}}
     
     <article>
         <p class="error">{{error}}</p>
         <div class="form login-form">
-        <form action="/login" method="POST">
+        <form action="/register" method="POST">
             <p>Username</p>
             <input type="text" name="username"/>
             <p>Password</p>
             <input type="password" name="password"/>
+            <br />
+            <input type="checkbox" name="agree" />
+            <label for="agree">I understand that my password will not be stored or transmitted securely</label>
             <br />
             <button type="submit">Log In</button>
         </form>
