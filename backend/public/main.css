@@ -10,6 +10,19 @@ nav {
     text-decoration: none;
 }
 
+footer {
+    background-color: #FF99C9;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    /* I give up on actually trying to make it 
+    be at the bottom of the page even if the 
+    content does not. It is far too difficult */
+}
+
 article {
     background-color: #DCEAB2;
     margin: auto;

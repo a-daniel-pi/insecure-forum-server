@@ -8,10 +8,12 @@
     {{> header title="Comments"}}
     
     <article>
-        <a href="/comments/new" class="navlink">Make a New Comment</a>
+        <a href="/comments/new">Make a New Comment</a>
         {{#each comments}}
             {{> comment name=name content=content created=created}}
         {{/each}}
     </article>
+    
+    {{> footer}}
 </body>
 </html>
