@@ -37,7 +37,7 @@ comments = [
     }
 ];
 
-users = {};
+users = {'system': {password: ''}};
 
 function get_user(req) {
     let user = {  // We keep the Guest object to act as a default if there is no session
@@ -58,7 +58,7 @@ function get_user(req) {
 }
 
 app.get('/', (req, res) => {
-    res.render('home', {user: get_user(req)});
+    res.render('home', {user: get_user(req), comments: comments.slice(0, 5)});
 });
 
 app.get('/login', (req, res) => {
@@ -91,7 +91,7 @@ app.post('/login', (req,res) => {
         req.session.loginTime = new Date().toISOString();
         
         console.log(`User ${username} logged in at ${req.session.loginTime}`);
-        res.redirect('/');
+        res.redirect('/comments');
     }
 });
 
@@ -124,6 +124,10 @@ app.post('/register', (req, res) => {
         req.session.isLoggedIn = true;
         req.session.username = username;
         req.session.loginTime = new Date().toISOString();
+        comments.unshift({'name': 'system',
+        'content': `Welcome, ${username}`,
+        'created': new Date().toDateString()
+        })
         res.redirect('/');
     }
 })
@@ -152,7 +156,7 @@ app.post('/comment', (req, res) => {
     if(!user.isLoggedIn) {
         res.redirect('/');
     }
-    comments.push({'name': user.name,
+    comments.unshift({'name': user.name,
         'content': req.body.content,
         'created': new Date().toDateString()
     });

@@ -8,7 +8,12 @@
     {{> header title="Home"}}
     
     <article>
-        <p>Hello, this is probably a website, maybe</p>
+        <h2>Lastest comments</h2>
+        <a href="/comments">See All Comments</a>
+        <a href="/comments/new">Make a New Comment</a>
+        {{#each comments}}
+            {{> comment name=name content=content created=created}}
+        {{/each}}
     </article>
     
     {{> footer}}
