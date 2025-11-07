@@ -37,7 +37,10 @@ comments = [
     }
 ];
 
-users = {'system': {password: ''}};
+// The system and guest accounts should not be login-able
+// so if ther epassword is empty, then if the user tries to log in
+// thy will be instead told to enter a password which will inevitably be incorrect
+users = {'system': {password: ''}, 'guest': {password: ''}};
 
 function get_user(req) {
     let user = {  // We keep the Guest object to act as a default if there is no session
