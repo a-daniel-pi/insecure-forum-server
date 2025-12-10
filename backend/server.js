@@ -3,6 +3,8 @@ const session = require('express-session');
 const hbs = require('hbs');
 const path = require('path');
 
+const {get_user, auth_router} = require('./auth');
+
 const app = express();
 const PORT = 3000;
 
@@ -37,112 +39,11 @@ comments = [
     }
 ];
 
-// The system and guest accounts should not be login-able
-// so if ther epassword is empty, then if the user tries to log in
-// thy will be instead told to enter a password which will inevitably be incorrect
-users = {'system': {password: ''}, 'guest': {password: ''}};
-
-function get_user(req) {
-    let user = {  // We keep the Guest object to act as a default if there is no session
-        name: "guest",
-        isLoggedIn: false,
-        loginTime: null,
-    };
-    
-    // Check if user is logged in via session
-    if (req.session.isLoggedIn) {
-        user = {
-            name: req.session.username,
-            isLoggedIn: true,
-            loginTime: req.session.loginTime,
-        };
-    }
-    return user;
-}
-
 app.get('/', (req, res) => {
     res.render('home', {user: get_user(req), comments: comments.slice(0, 5)});
 });
 
-app.get('/login', (req, res) => {
-    user = get_user(req);
-    if(user.isLoggedIn) {
-        res.redirect('/');
-    }
-    else {
-        res.render('login', {user: user});
-    }
-});
-
-app.post('/login', (req,res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    
-    if (!username || !password) {
-        res.render('login', {user: get_user(req), error: "Need to enter username and password"});
-    }
-    else if(users[username] == undefined) {
-        res.render('login', {user: get_user(req), error: "Wrong username or password"});
-    }
-    else if (users[username].password != password) {
-        res.render('login', {user: get_user(req), error: "Wrong username or password"});
-    }
-    else {
-        // Set session data
-        req.session.isLoggedIn = true;
-        req.session.username = username;
-        req.session.loginTime = new Date().toISOString();
-        
-        console.log(`User ${username} logged in at ${req.session.loginTime}`);
-        res.redirect('/comments');
-    }
-});
-
-app.get('/register', (req, res) => {
-    user = get_user(req);
-    if(user.isLoggedIn) {
-        res.redirect('/');
-    }
-    else {
-        res.render('register', {user: user, error: ""});
-    }
-});
-
-app.post('/register', (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const agreed = req.body.agree;
-    
-    if(!agreed) {
-        res.render('register', {user: get_user(req), error: "You did not agree"});
-    }
-    else if (!username || !password) {
-        res.render('register', {user: get_user(req), error: "Need to enter username and password"});
-    }
-    else if (users[username] != undefined) {
-        res.render('register', {user: get_user(req), error: "Username already taken"})
-    }
-    else {
-        users[username] = {password: password};
-        req.session.isLoggedIn = true;
-        req.session.username = username;
-        req.session.loginTime = new Date().toISOString();
-        comments.unshift({'name': 'system',
-        'content': `Welcome, ${username}`,
-        'created': new Date().toDateString()
-        })
-        res.redirect('/');
-    }
-})
-
-app.post('/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.log('Error destroying session:', err);
-        }
-        res.redirect('/');
-    });
-});
+app.use('/auth', auth_router);
 
 app.get('/comments/new', (req, res) => {
     user = get_user(req);
