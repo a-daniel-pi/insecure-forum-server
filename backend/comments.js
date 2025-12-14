@@ -18,15 +18,20 @@ comment_router.post('/new', (req, res) => {
     if(!user.isLoggedIn) {
         res.redirect('/');
     }
-    const stmt = db.prepare('INSERT INTO comments (username, content) VALUES (?, ?)');
-    const result = stmt.run(user.name, req.body.content);
+    const stmt = db.prepare('INSERT INTO comments (user, content) VALUES (?, ?)');
+    const result = stmt.run(user.id, req.body.content);
     res.redirect('/comments');
 });
 
 comment_router.get('/', (req, res) => {
     const stmt = db.prepare('SELECT * FROM comments');
     const comments = stmt.all();
-    console.log(comments)
+    for (const comment of comments) {
+        const userget = db.prepare('SELECT * FROM users WHERE id = ?');
+        const user = userget.get(comment.user)
+        console.log(comment);
+        comment.username = user.username;
+    }
     res.render('comments', {comments: comments, user: get_user(req)});
 });
 

@@ -1,17 +1,13 @@
 const express = require('express');
-const path = require('path');
+const db = require('./database');
 const auth_router = express.Router();
-
-// The system and guest accounts should not be login-able
-// so if ther epassword is empty, then if the user tries to log in
-// thy will be instead told to enter a password which will inevitably be incorrect
-users = {'system': {password: ''}, 'guest': {password: ''}};
 
 function get_user(req) {
     let user = {  // We keep the Guest object to act as a default if there is no session
         name: "guest",
         isLoggedIn: false,
         loginTime: null,
+        id: null
     };
     
     // Check if user is logged in via session
@@ -20,6 +16,7 @@ function get_user(req) {
             name: req.session.username,
             isLoggedIn: true,
             loginTime: req.session.loginTime,
+            id: req.session.userid
         };
     }
     return user;
@@ -37,24 +34,31 @@ auth_router.get('/login', (req, res) => {
 });
 
 // Log the user in if there are no errors
-// if there are erros, re-render the login page with an error message
+// if there are errors, re-render the login page with an error message
 auth_router.post('/login', (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
     
     if (!username || !password) { // The user may have not entered all required fields
         res.render('login', {user: get_user(req), error: "Need to enter username and password"});
+        return; // No more work to do
     }
-    else if(users[username] == undefined) { // Username does not exsit
+    
+    const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
+    const user = stmt.get(username);
+    
+    if(user == undefined) { // Username does not exist
         res.render('login', {user: get_user(req), error: "Wrong username or password"});
+        return;
     }
-    else if (users[username].password != password) { // Password is wring
+    else if (user.password != password) { // Password is wrong
         res.render('login', {user: get_user(req), error: "Wrong username or password"});
     }
     else {
         // Set session data
         req.session.isLoggedIn = true;
         req.session.username = username;
+        req.session.userid = user.id;
         req.session.loginTime = new Date().toISOString();
         
         console.log(`User ${username} logged in at ${req.session.loginTime}`);
@@ -82,23 +86,25 @@ auth_router.post('/register', (req, res) => {
     
     if(!agreed) { // Agree
         res.render('register', {user: get_user(req), error: "You did not agree"});
+        return;
     }
-    else if (!username || !password) { // The user has to fill in all the fields
+    if (!username || !password) { // The user has to fill in all the fields
         res.render('register', {user: get_user(req), error: "Need to enter username and password"});
     }
-    else if (users[username] != undefined) { // The username has to exist
-        res.render('register', {user: get_user(req), error: "Username already taken"})
-    }
-    else {
-        users[username] = {password: password};
+    
+    try {
+        const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
+        const result = stmt.run(username, 'Not Implemented Yet', password);
         req.session.isLoggedIn = true;
         req.session.username = username;
+        req.session.userid = result.lastInsertRowid;
         req.session.loginTime = new Date().toISOString();
-        comments.unshift({'name': 'system',
-        'content': `Welcome, ${username}`,
-        'created': new Date().toDateString()
-        })
         res.redirect('/');
+    }
+    catch (error) {
+        if (error.message.includes('UNIQUE constraint')) { // The username has not be taken
+            res.render('register', {user: get_user(req), error: "Username already taken"})
+    }
     }
 })
 
