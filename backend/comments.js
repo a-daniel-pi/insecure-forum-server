@@ -1,14 +1,7 @@
 const express = require('express');
 const {get_user} = require('./auth');
+const db = require('./database');
 const comment_router = express.Router();
-
-comments = [
-    {
-        'name': 'system',
-        'content': "Welcome to this new site.",
-        'created': new Date().toDateString()
-    }
-];
 
 comment_router.get('/new', (req, res) => {
     user = get_user(req);
@@ -25,14 +18,15 @@ comment_router.post('/new', (req, res) => {
     if(!user.isLoggedIn) {
         res.redirect('/');
     }
-    comments.unshift({'name': user.name,
-        'content': req.body.content,
-        'created': new Date().toDateString()
-    });
+    const stmt = db.prepare('INSERT INTO comments (username, content) VALUES (?, ?)');
+    const result = stmt.run(user.name, req.body.content);
     res.redirect('/comments');
 });
 
 comment_router.get('/', (req, res) => {
+    const stmt = db.prepare('SELECT * FROM comments');
+    const comments = stmt.all();
+    console.log(comments)
     res.render('comments', {comments: comments, user: get_user(req)});
 });
 

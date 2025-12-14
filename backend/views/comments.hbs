@@ -10,7 +10,7 @@
     <article>
         <a href="/comments/new">Make a New Comment</a>
         {{#each comments}}
-            {{> comment name=name content=content created=created}}
+            {{> comment name=username content=content created=created_at}}
         {{/each}}
     </article>
     
