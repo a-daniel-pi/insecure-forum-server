@@ -82,19 +82,20 @@ auth_router.get('/register', (req, res) => {
 auth_router.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    const displayname = req.body.displayname;
     const agreed = req.body.agree;
     
     if(!agreed) { // Agree
         res.render('register', {user: get_user(req), error: "You did not agree"});
         return;
     }
-    if (!username || !password) { // The user has to fill in all the fields
-        res.render('register', {user: get_user(req), error: "Need to enter username and password"});
+    if (!username || !password || !displayname) { // The user has to fill in all the fields
+        res.render('register', {user: get_user(req), error: "Please enter into all fields"});
     }
     
     try {
         const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
-        const result = stmt.run(username, 'Not Implemented Yet', password);
+        const result = stmt.run(username, displayname, password);
         req.session.isLoggedIn = true;
         req.session.username = username;
         req.session.userid = result.lastInsertRowid;

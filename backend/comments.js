@@ -26,11 +26,11 @@ comment_router.post('/new', (req, res) => {
 comment_router.get('/', (req, res) => {
     const stmt = db.prepare('SELECT * FROM comments');
     const comments = stmt.all();
-    for (const comment of comments) {
+    for (const comment of comments) { // Get the username of each user
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
-        const user = userget.get(comment.user)
+        const user = userget.get(comment.user);
+        comment.username = user.display_name;
         console.log(comment);
-        comment.username = user.username;
     }
     res.render('comments', {comments: comments, user: get_user(req)});
 });
