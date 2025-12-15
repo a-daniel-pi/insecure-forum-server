@@ -40,7 +40,7 @@ auth_router.post('/login', (req,res) => {
     const password = req.body.password;
     
     if (!username || !password) { // The user may have not entered all required fields
-        res.render('login', {user: get_user(req), error: "Need to enter username and password"});
+        res.render('login', {user: get_user(req), error: "Please enter username and password"});
         return; // No more work to do
     }
     

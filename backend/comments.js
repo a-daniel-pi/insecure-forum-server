@@ -24,13 +24,16 @@ comment_router.post('/new', (req, res) => {
 });
 
 comment_router.get('/', (req, res) => {
-    const stmt = db.prepare('SELECT * FROM comments');
-    const comments = stmt.all();
+    let page = 0
+    if(req.query.page) {
+        page = req.query.page;
+    }
+    const stmt = db.prepare('SELECT * FROM comments LIMIT 20 OFFSET ?');
+    const comments = stmt.all(page*20);
     for (const comment of comments) { // Get the username of each user
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
         const user = userget.get(comment.user);
         comment.username = user.display_name;
-        console.log(comment);
     }
     res.render('comments', {comments: comments, user: get_user(req)});
 });
