@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <title>My Profile</title>
+</head>
+<body>
+    {{> header title="My Profile"}}
+    
+    <article>
+        <p class="username">{{name}}</p>
+        <p>({{username}})</p>
+        <a href="/auth/chdisplay">Change Display Name</a>
+        <a href="/auth/chpass">Change Password</a>
+    </article>
+    
+    {{> footer}}
+</body>
+</html>

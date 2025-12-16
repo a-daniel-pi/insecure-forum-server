@@ -14,6 +14,7 @@ function get_user(req) {
     if (req.session.isLoggedIn) {
         user = {
             name: req.session.username,
+            displayname: req.session.displayname,
             isLoggedIn: true,
             loginTime: req.session.loginTime,
             id: req.session.userid
@@ -58,6 +59,7 @@ auth_router.post('/login', (req,res) => {
         // Set session data
         req.session.isLoggedIn = true;
         req.session.username = username;
+        req.session.displayname = user.display_name;
         req.session.userid = user.id;
         req.session.loginTime = new Date().toISOString();
         
@@ -131,6 +133,7 @@ auth_router.post('/register', (req, res) => {
             const result = stmt.run(username, displayname, password);
             console.log(result)
             req.session.isLoggedIn = true;
+            req.session.displayname = displayname;
             req.session.username = username;
             req.session.userid = result.lastInsertRowid;
             req.session.loginTime = new Date().toISOString();
@@ -142,7 +145,7 @@ auth_router.post('/register', (req, res) => {
         }
     }
     res.render('register', {user: get_user(req), errors: errors});
-})
+});
 
 // Log the user out
 auth_router.post('/logout', (req, res) => {
@@ -153,5 +156,21 @@ auth_router.post('/logout', (req, res) => {
         res.redirect('/');
     });
 });
+
+auth_router.get('/myprofile', (req, res) => {
+    user = get_user(req);
+    res.render('myprofile', {user: user, name: user.displayname, username: user.name})
+});
+
+auth_router.get('/chdisplay', (req, res) => {
+    res.render('chdisplay', {user: get_user(req)});
+});
+
+auth_router.post('/chdisplay', (req, res) => {
+    const stmt = db.prepare('UPDATE users SET display_name = ? WHERE id = ?');
+    stmt.run(req.body.displayname, get_user(req).id);
+    req.session.displayname = req.body.displayname;
+    res.redirect('/auth/myprofile');
+})
 
 module.exports = {get_user, auth_router};

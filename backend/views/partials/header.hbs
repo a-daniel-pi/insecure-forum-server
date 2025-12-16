@@ -3,6 +3,7 @@
     <a href="/" class="navlink">Home</a>
     <a href="/comments" class="navlink">Comments</a>
     {{#if @root.user.isLoggedIn}}
+        <a href="/auth/myprofile" class="navlink">My Profile</a>
         <form action="/auth/logout" method="POST" class="logout">
             <button type="submit" class="log">Log Out</button>
         </form>

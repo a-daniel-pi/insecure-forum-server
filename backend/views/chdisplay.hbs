@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <title>Change Display Name</title>
+</head>
+<body>
+    {{> header title="Change Display Name"}}
+    
+    <article>
+        <form action="/auth/chdisplay" method="POST">
+            <p>Display Name</p>
+            <input type="text" name="displayname"/>
+            <br/>
+            <button type="submit">Change Display Name</button>
+        </form>
+        
+    </article>
+    
+    {{> footer}}
+</body>
+</html>
