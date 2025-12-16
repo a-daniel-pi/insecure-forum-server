@@ -24,9 +24,15 @@ comment_router.post('/new', (req, res) => {
 });
 
 comment_router.get('/', (req, res) => {
-    let page = 1
+    let page = 1;
     if(req.query.page) {
         page = parseInt(req.query.page);
+        if(isNaN(page)) { // parseInt returns NaN if it fails, why???
+            page = 1;
+        }
+    }
+    if(page < 1) {
+        page = 1;
     }
     const stmt = db.prepare('SELECT * FROM comments ORDER BY id DESC LIMIT 20 OFFSET ?');
     const comments = stmt.all((page-1)*20);
@@ -35,7 +41,8 @@ comment_router.get('/', (req, res) => {
         const user = userget.get(comment.user);
         comment.username = user.display_name;
     }
-    res.render('comments', {comments: comments, user: get_user(req), next: page+1, prev: page-1});
+    res.render('comments', {comments: comments, user: get_user(req), 
+                            next: page+1, prev: page-1, hasNext: comments.length==20});
 });
 
 function get_last_comments(count) {

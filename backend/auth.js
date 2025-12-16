@@ -103,10 +103,7 @@ function verifyPass(password) {
         errors.push("Password must include at least special character");
     }
     
-    return {
-        errors: errors,
-        valid: errors.length==0
-    };
+    return errors;
 }
 
 // Register the user if there are no errors
@@ -126,6 +123,8 @@ auth_router.post('/register', (req, res) => {
         errors.push("Please enter into all fields");
     }
     
+    errors.push(...verifyPass(password));
+    console.log(errors);
     if (errors.length==0) {
         try {
             const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');

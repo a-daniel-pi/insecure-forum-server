@@ -18,7 +18,9 @@
         {{#if prev}}
             <a href="/comments?page={{prev}}">Previous Page</a>
         {{/if}}
-        <a href="/comments?page={{next}}" class="next">Next Page</a>
+        {{#if hasNext}}
+            <a href="/comments?page={{next}}" class="next">Next Page</a>
+        {{/if}}
     </article>
     
     {{> footer}}
