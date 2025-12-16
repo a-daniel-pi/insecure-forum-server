@@ -28,7 +28,7 @@ comment_router.get('/', (req, res) => {
     if(req.query.page) {
         page = req.query.page;
     }
-    const stmt = db.prepare('SELECT * FROM comments LIMIT 20 OFFSET ?');
+    const stmt = db.prepare('SELECT * FROM comments ORDER BY id DESC LIMIT 20 OFFSET ?');
     const comments = stmt.all(page*20);
     for (const comment of comments) { // Get the username of each user
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
