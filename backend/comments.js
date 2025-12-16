@@ -24,18 +24,18 @@ comment_router.post('/new', (req, res) => {
 });
 
 comment_router.get('/', (req, res) => {
-    let page = 0
+    let page = 1
     if(req.query.page) {
-        page = req.query.page;
+        page = parseInt(req.query.page);
     }
     const stmt = db.prepare('SELECT * FROM comments ORDER BY id DESC LIMIT 20 OFFSET ?');
-    const comments = stmt.all(page*20);
+    const comments = stmt.all((page-1)*20);
     for (const comment of comments) { // Get the username of each user
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
         const user = userget.get(comment.user);
         comment.username = user.display_name;
     }
-    res.render('comments', {comments: comments, user: get_user(req)});
+    res.render('comments', {comments: comments, user: get_user(req), next: page+1, prev: page-1});
 });
 
 module.exports = {comment_router};

@@ -97,6 +97,10 @@ form p {
     text-align: left;
 }
 
+.next {
+    text-align: right;
+}
+
 button {
     margin-top: 5px;
     font-size: 20px;

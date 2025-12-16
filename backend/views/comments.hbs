@@ -9,9 +9,16 @@
     
     <article>
         <a href="/comments/new">Make a New Comment</a>
+        {{#unless comments}}
+            <p>No comments on this page. </p>
+        {{/unless}}
         {{#each comments}}
             {{> comment name=username content=content created=created_at}}
         {{/each}}
+        {{#if prev}}
+            <a href="/comments?page={{prev}}">Previous Page</a>
+        {{/if}}
+        <a href="/comments?page={{next}}" class="next">Next Page</a>
     </article>
     
     {{> footer}}
