@@ -38,4 +38,15 @@ comment_router.get('/', (req, res) => {
     res.render('comments', {comments: comments, user: get_user(req), next: page+1, prev: page-1});
 });
 
-module.exports = {comment_router};
+function get_last_comments(count) {
+    const stmt = db.prepare('SELECT * FROM comments ORDER BY id DESC LIMIT ?');
+    const comments = stmt.all(count);
+    for (const comment of comments) { // Get the username of each user
+        const userget = db.prepare('SELECT * FROM users WHERE id = ?');
+        const user = userget.get(comment.user);
+        comment.username = user.display_name;
+    }
+    return comments;
+}
+
+module.exports = {comment_router, get_last_comments};

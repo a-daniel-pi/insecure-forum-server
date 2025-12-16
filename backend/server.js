@@ -4,7 +4,7 @@ const hbs = require('hbs');
 const path = require('path');
 
 const {get_user, auth_router} = require('./auth');
-const {comment_router} = require('./comments');
+const {comment_router, get_last_comments} = require('./comments');
 
 const app = express();
 const PORT = 3000;
@@ -33,7 +33,7 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-    res.render('home', {user: get_user(req)});
+    res.render('home', {user: get_user(req), comments: get_last_comments(5)});
 });
 
 app.use('/auth', auth_router);
