@@ -73,9 +73,41 @@ auth_router.get('/register', (req, res) => {
         res.redirect('/');
     }
     else {
-        res.render('register', {user: user, error: ""});
+        res.render('register', {user: user, errors: []});
     }
 });
+
+function verifyPass(password) {
+    // check if password is valid
+    // longer than _ characters
+    // must include uppercase, special, numbers
+    errors = []; // List of things wrong with password
+    
+    if (password.length < 8) {
+        errors.push("Password must be 8 or more characters long");
+    }
+    
+    if(!/[A-Z]/.test(password)) {
+        errors.push("Password must include at least one uppercase letter");
+    }
+    
+    if(!/[a-z]/.test(password)) {
+        errors.push("Password must include at least one lowercase letter");
+    }
+    
+    if(!/[0-9]/.test(password)) {
+        errors.push("Password must include at least one number");
+    }
+    
+    if(!/[`~!@#$%^&*()-=_+[\]{}|;':",.\/\\<>?]/.test(password)) {
+        errors.push("Password must include at least special character");
+    }
+    
+    return {
+        errors: errors,
+        valid: errors.length==0
+    };
+}
 
 // Register the user if there are no errors
 // If there are errors, tell the user
@@ -85,28 +117,32 @@ auth_router.post('/register', (req, res) => {
     const displayname = req.body.displayname;
     const agreed = req.body.agree;
     
+    const errors = [];
+    
     if(!agreed) { // Agree
-        res.render('register', {user: get_user(req), error: "You did not agree"});
-        return;
+        errors.push("You did not agree");
     }
     if (!username || !password || !displayname) { // The user has to fill in all the fields
-        res.render('register', {user: get_user(req), error: "Please enter into all fields"});
+        errors.push("Please enter into all fields");
     }
     
-    try {
-        const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
-        const result = stmt.run(username, displayname, password);
-        req.session.isLoggedIn = true;
-        req.session.username = username;
-        req.session.userid = result.lastInsertRowid;
-        req.session.loginTime = new Date().toISOString();
-        res.redirect('/');
+    if (errors.length==0) {
+        try {
+            const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
+            const result = stmt.run(username, displayname, password);
+            console.log(result)
+            req.session.isLoggedIn = true;
+            req.session.username = username;
+            req.session.userid = result.lastInsertRowid;
+            req.session.loginTime = new Date().toISOString();
+            res.redirect('/');
+            return;
+        }
+        catch (error) {
+            errors.push("Username already taken")
+        }
     }
-    catch (error) {
-        if (error.message.includes('UNIQUE constraint')) { // The username has not be taken
-            res.render('register', {user: get_user(req), error: "Username already taken"})
-    }
-    }
+    res.render('register', {user: get_user(req), errors: errors});
 })
 
 // Log the user out
