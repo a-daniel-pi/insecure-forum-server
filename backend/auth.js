@@ -86,16 +86,17 @@ auth_router.get('/register', (req, res) => {
 auth_router.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
+    const repassword = req.body.repassword;
     const displayname = req.body.displayname;
-    const agreed = req.body.agree;
     
     const errors = [];
     
-    if(!agreed) { // Agree
-        errors.push("You did not agree");
-    }
     if (!username || !password || !displayname) { // The user has to fill in all the fields
         errors.push("Please enter into all fields");
+    }
+    
+    if (password != repassword) {
+        errors.push("Password fields must be the same");
     }
     
     errors.push(...verifyPass(password));
