@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const hbs = require('hbs');
 const path = require('path');
+const SqliteStore = require('./session');
 
 const {get_user, auth_router} = require('./auth');
 const {comment_router, get_last_comments} = require('./comments');
@@ -21,10 +22,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// Cookie middleware
+// Set up session manager
+const sessionStore = new SqliteStore();
+
 app.use(session({
-    secret: 'your-secret-key-change-this-in-production',
+    secret: 'very-secret',
     resave: false,
+    store: sessionStore,
     saveUninitialized: false,
     cookie: {
         secure: false, // Set to true if using HTTPS

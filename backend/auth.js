@@ -171,6 +171,6 @@ auth_router.post('/chdisplay', (req, res) => {
     stmt.run(req.body.displayname, get_user(req).id);
     req.session.displayname = req.body.displayname;
     res.redirect('/auth/myprofile');
-})
+});
 
 module.exports = {get_user, auth_router};

@@ -24,4 +24,11 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABlE IF NOT EXISTS session (
+    sid TEXT PRIMARY KEY,
+    ses TEXT NOT NULL,
+    expire INTEGER NOT NULL
+  )`);
+
 module.exports = db;
