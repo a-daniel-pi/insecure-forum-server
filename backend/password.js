@@ -1,6 +1,8 @@
+const argon2 = require('argon2');
+
 function verifyPass(password) {
     // check if password is valid
-    // longer than _ characters
+    // longer than 8 characters
     // must include uppercase, special, numbers
     errors = []; // List of things wrong with password
     
@@ -20,11 +22,22 @@ function verifyPass(password) {
         errors.push("Password must include at least one number");
     }
     
-    if(!/[`~!@#$%^&*()-=_+[\]{}|;':",.\/\\<>?]/.test(password)) {
+    if(!/[`~!@#$%^&*()-=_+|;':",.<>?]/.test(password)) {
         errors.push("Password must include at least special character");
     }
     
     return errors;
 }
 
-module.exports = {verifyPass}
+async function hashPass(password) {
+    const hashedPassword = await argon2.hash(password);
+    return hashedPassword;
+}
+
+async function checkHash(password, hash) {
+    const matched = await argon2.verify(hash, password);
+    return matched;
+}
+
+
+module.exports = {verifyPass, hashPass, checkHash};

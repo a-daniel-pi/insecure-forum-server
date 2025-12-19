@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('./database');
-const {verifyPass} = require('./password');
+const {verifyPass, checkHash, hashPass} = require('./password');
 
 const auth_router = express.Router();
 
@@ -38,7 +38,7 @@ auth_router.get('/login', (req, res) => {
 
 // Log the user in if there are no errors
 // if there are errors, re-render the login page with an error message
-auth_router.post('/login', (req,res) => {
+auth_router.post('/login', async (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
     
@@ -54,7 +54,7 @@ auth_router.post('/login', (req,res) => {
         res.render('login', {user: get_user(req), error: "Wrong username or password"});
         return;
     }
-    else if (user.password != password) { // Password is wrong
+    if(!await checkHash(password, user.password)) { // Password is wrong
         res.render('login', {user: get_user(req), error: "Wrong username or password"});
     }
     else {
@@ -83,7 +83,7 @@ auth_router.get('/register', (req, res) => {
 
 // Register the user if there are no errors
 // If there are errors, tell the user
-auth_router.post('/register', (req, res) => {
+auth_router.post('/register', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const repassword = req.body.repassword;
@@ -91,7 +91,7 @@ auth_router.post('/register', (req, res) => {
     
     const errors = [];
     
-    if (!username || !password || !displayname) { // The user has to fill in all the fields
+    if (!username || !password || !displayname || !repassword) { // The user has to fill in all the fields
         errors.push("Please enter into all fields");
     }
     
@@ -102,8 +102,9 @@ auth_router.post('/register', (req, res) => {
     errors.push(...verifyPass(password));
     if (errors.length==0) {
         try {
+            hash = await hashPass(password);
             const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
-            const result = stmt.run(username, displayname, password);
+            const result = stmt.run(username, displayname, hash);
             req.session.isLoggedIn = true;
             req.session.displayname = displayname;
             req.session.username = username;

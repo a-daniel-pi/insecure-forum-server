@@ -11,7 +11,8 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     display_name TEXT NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    color TEXT NOT NULL DEFAULT "black"
   )`);
   
 db.exec(`

@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('./database');
-const {verifyPass} = require('./password');
+const {verifyPass, checkHash, hashPass} = require('./password');
 const {get_user} = require('./auth');
 
 const profile_router = express.Router();
@@ -25,7 +25,7 @@ profile_router.get('/chpass', (req, res) => {
     res.render('chpass', {user: get_user(req)});
 });
 
-profile_router.post('/chpass', (req, res) => {
+profile_router.post('/chpass', async (req, res) => {
     const newpassword = req.body.newpassword;
     const oldpassword = req.body.oldpassword;
     const repassword = req.body.repassword;
@@ -35,7 +35,7 @@ profile_router.post('/chpass', (req, res) => {
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
     const userdata = stmt.get(user.name);
     
-    if (userdata.password != oldpassword) { // Password is wrong
+    if (await checkHash(oldpassword, userdata.password)) { // Password is wrong
         errors.push("Wrong password");
     }
     if (newpassword != repassword) {
@@ -43,8 +43,9 @@ profile_router.post('/chpass', (req, res) => {
     }
     errors.push(...verifyPass(newpassword));
     if (errors.length==0) {
+        hash = await hashPass(newpassword);
         const stmt = db.prepare('UPDATE users SET password = ? WHERE id = ?');
-        stmt.run(newpassword, user.id);
+        stmt.run(hash, user.id);
         res.redirect('/myprofile');
     }
     else {
