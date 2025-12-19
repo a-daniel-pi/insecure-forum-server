@@ -18,7 +18,39 @@ profile_router.post('/chdisplay', (req, res) => {
     const stmt = db.prepare('UPDATE users SET display_name = ? WHERE id = ?');
     stmt.run(req.body.displayname, get_user(req).id);
     req.session.displayname = req.body.displayname;
-    res.redirect('/myprofile/myprofile');
+    res.redirect('/myprofile');
+});
+
+profile_router.get('/chpass', (req, res) => {
+    res.render('chpass', {user: get_user(req)});
+});
+
+profile_router.post('/chpass', (req, res) => {
+    const newpassword = req.body.newpassword;
+    const oldpassword = req.body.oldpassword;
+    const repassword = req.body.repassword;
+    const errors = [];
+    const user = get_user(req)
+    
+    const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
+    const userdata = stmt.get(user.name);
+    
+    if (userdata.password != oldpassword) { // Password is wrong
+        errors.push("Wrong password");
+    }
+    if (newpassword != repassword) {
+        errors.push("New and retyped passwords must match");
+    }
+    errors.push(...verifyPass(newpassword));
+    if (errors.length==0) {
+        const stmt = db.prepare('UPDATE users SET password = ? WHERE id = ?');
+        stmt.run(newpassword, user.id);
+        res.redirect('/myprofile');
+    }
+    else {
+        res.render('chpass', {user: user, errors: errors});
+    }
+    
 });
 
 module.exports = profile_router;

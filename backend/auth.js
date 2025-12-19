@@ -99,12 +99,10 @@ auth_router.post('/register', (req, res) => {
     }
     
     errors.push(...verifyPass(password));
-    console.log(errors);
     if (errors.length==0) {
         try {
             const stmt = db.prepare('INSERT INTO users (username, display_name, password) VALUES (?, ?, ?)');
             const result = stmt.run(username, displayname, password);
-            console.log(result)
             req.session.isLoggedIn = true;
             req.session.displayname = displayname;
             req.session.username = username;

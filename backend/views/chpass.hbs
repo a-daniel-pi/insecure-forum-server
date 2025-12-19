@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/main.css" />
+    <title>Change Display Name</title>
+</head>
+<body>
+    {{> header title="Change Display Name"}}
+    
+    <article>
+        {{#each errors}}
+            <p class="error">{{this}}</p>
+        {{/each}}
+        <form action="/myprofile/chpass" method="POST">
+            <p>Old Password</p>
+            <input type="password" name="oldpassword"/>
+            <p>New Password</p>
+            <input type="password" name="newpassword"/>
+            <p>Retype Password</p>
+            <input type="password" name="repassword"/>
+            <br/>
+            <button type="submit">Change Password</button>
+        </form>
+        
+    </article>
+    
+    {{> footer}}
+</body>
+</html>
