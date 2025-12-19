@@ -39,6 +39,10 @@ auth_router.get('/login', (req, res) => {
 // Log the user in if there are no errors
 // if there are errors, re-render the login page with an error message
 auth_router.post('/login', async (req,res) => {
+    if(req.body.isLoggedIn) {
+        res.redirect('/');
+        return;
+    }
     const username = req.body.username;
     const password = req.body.password;
     
@@ -84,6 +88,10 @@ auth_router.get('/register', (req, res) => {
 // Register the user if there are no errors
 // If there are errors, tell the user
 auth_router.post('/register', async (req, res) => {
+    if(req.body.isLoggedIn) {
+        res.redirect('/');
+        return;
+    }
     const username = req.body.username;
     const password = req.body.password;
     const repassword = req.body.repassword;
@@ -122,6 +130,9 @@ auth_router.post('/register', async (req, res) => {
 
 // Log the user out
 auth_router.post('/logout', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/');
+    }
     req.session.destroy((err) => {
         if (err) {
             console.log('Error destroying session:', err);

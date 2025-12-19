@@ -7,14 +7,26 @@ const profile_router = express.Router();
 
 profile_router.get('/', (req, res) => {
     user = get_user(req);
+    if(!user.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
     res.render('myprofile', {user: user, name: user.displayname, username: user.name})
 });
 
 profile_router.get('/chdisplay', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
     res.render('chdisplay', {user: get_user(req)});
 });
 
 profile_router.post('/chdisplay', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
     const stmt = db.prepare('UPDATE users SET display_name = ? WHERE id = ?');
     stmt.run(req.body.displayname, get_user(req).id);
     req.session.displayname = req.body.displayname;
@@ -22,6 +34,10 @@ profile_router.post('/chdisplay', (req, res) => {
 });
 
 profile_router.get('/chpass', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
     res.render('chpass', {user: get_user(req)});
 });
 
@@ -30,7 +46,11 @@ profile_router.post('/chpass', async (req, res) => {
     const oldpassword = req.body.oldpassword;
     const repassword = req.body.repassword;
     const errors = [];
-    const user = get_user(req)
+    const user = get_user(req);
+    if(!user.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
     
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
     const userdata = stmt.get(user.name);
