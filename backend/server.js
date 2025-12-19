@@ -6,6 +6,7 @@ const SqliteStore = require('./session');
 
 const {get_user, auth_router} = require('./auth');
 const {comment_router, get_last_comments} = require('./comments');
+const profile_router = require('./myprofile');
 
 const app = express();
 const PORT = 3000;
@@ -43,6 +44,8 @@ app.get('/', (req, res) => {
 app.use('/auth', auth_router);
 
 app.use('/comments', comment_router);
+
+app.use('/myprofile', profile_router);
 
 // 404 handler
 app.use((req, res) => {

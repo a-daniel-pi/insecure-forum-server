@@ -1,5 +1,7 @@
 const express = require('express');
 const db = require('./database');
+const {verifyPass} = require('./password');
+
 const auth_router = express.Router();
 
 function get_user(req) {
@@ -79,35 +81,6 @@ auth_router.get('/register', (req, res) => {
     }
 });
 
-function verifyPass(password) {
-    // check if password is valid
-    // longer than _ characters
-    // must include uppercase, special, numbers
-    errors = []; // List of things wrong with password
-    
-    if (password.length < 8) {
-        errors.push("Password must be 8 or more characters long");
-    }
-    
-    if(!/[A-Z]/.test(password)) {
-        errors.push("Password must include at least one uppercase letter");
-    }
-    
-    if(!/[a-z]/.test(password)) {
-        errors.push("Password must include at least one lowercase letter");
-    }
-    
-    if(!/[0-9]/.test(password)) {
-        errors.push("Password must include at least one number");
-    }
-    
-    if(!/[`~!@#$%^&*()-=_+[\]{}|;':",.\/\\<>?]/.test(password)) {
-        errors.push("Password must include at least special character");
-    }
-    
-    return errors;
-}
-
 // Register the user if there are no errors
 // If there are errors, tell the user
 auth_router.post('/register', (req, res) => {
@@ -155,22 +128,6 @@ auth_router.post('/logout', (req, res) => {
         }
         res.redirect('/');
     });
-});
-
-auth_router.get('/myprofile', (req, res) => {
-    user = get_user(req);
-    res.render('myprofile', {user: user, name: user.displayname, username: user.name})
-});
-
-auth_router.get('/chdisplay', (req, res) => {
-    res.render('chdisplay', {user: get_user(req)});
-});
-
-auth_router.post('/chdisplay', (req, res) => {
-    const stmt = db.prepare('UPDATE users SET display_name = ? WHERE id = ?');
-    stmt.run(req.body.displayname, get_user(req).id);
-    req.session.displayname = req.body.displayname;
-    res.redirect('/auth/myprofile');
 });
 
 module.exports = {get_user, auth_router};
