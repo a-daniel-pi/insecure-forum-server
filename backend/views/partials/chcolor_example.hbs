@@ -1,0 +1,5 @@
+<form action="/myprofile/chcolor" method="POST">
+    {{> comment name=@root.user.name content="Example Content" created="1970" color=color}}
+    <input type="hidden" name="color" value={{color}}>
+    <button type="submit">Change Color</button>
+</form>

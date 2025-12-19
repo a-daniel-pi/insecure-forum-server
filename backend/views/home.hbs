@@ -12,7 +12,7 @@
         <a href="/comments">See All Comments</a>
         <a href="/comments/new">Make a New Comment</a>
         {{#each comments}}
-            {{> comment name=username content=content created=created_at}}
+            {{> comment name=username content=content created=created_at color=color}}
         {{/each}}
     </article>
     

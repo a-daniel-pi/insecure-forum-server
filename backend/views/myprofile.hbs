@@ -8,10 +8,13 @@
     {{> header title="My Profile"}}
     
     <article>
-        <p class="username">{{name}}</p>
-        <p>({{username}})</p>
+        <div class="comment">
+            <p class="username" style="color: {{color}}">{{name}}</p>
+            <p>({{username}})</p>
+        </div>
         <a href="/myprofile/chdisplay">Change Display Name</a>
         <a href="/myprofile/chpass">Change Password</a>
+        <a href="/myprofile/chcolor">Change Color</a>
     </article>
     
     {{> footer}}

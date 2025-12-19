@@ -11,7 +11,8 @@ profile_router.get('/', (req, res) => {
         res.redirect('/auth/login');
         return;
     }
-    res.render('myprofile', {user: user, name: user.displayname, username: user.name})
+    res.render('myprofile', {user: user, name: user.displayname, color: user.color, 
+        username: user.name})
 });
 
 profile_router.get('/chdisplay', (req, res) => {
@@ -72,6 +73,25 @@ profile_router.post('/chpass', async (req, res) => {
         res.render('chpass', {user: user, errors: errors});
     }
     
+});
+
+profile_router.get('/chcolor', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
+    res.render('chcolor', {user: get_user(req)});
+});
+
+profile_router.post('/chcolor', (req, res) => {
+    if(!req.session.isLoggedIn) {
+        res.redirect('/auth/login');
+        return;
+    }
+    const stmt = db.prepare('UPDATE users SET color = ? WHERE id = ?');
+    stmt.run(req.body.color, get_user(req).id);
+    req.session.color = req.body.color;
+    res.redirect('/myprofile');
 });
 
 module.exports = profile_router;
