@@ -13,7 +13,7 @@
             <p>No comments on this page. </p>
         {{/unless}}
         {{#each comments}}
-            {{> comment name=username content=content created=created_at color=color}}
+            {{> comment name=username content=content created=created_at}}
         {{/each}}
         {{#if prev}}
             <a href="/comments?page={{prev}}">Previous Page</a>

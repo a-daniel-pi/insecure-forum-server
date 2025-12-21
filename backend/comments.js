@@ -40,7 +40,6 @@ comment_router.get('/', (req, res) => {
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
         const user = userget.get(comment.user);
         comment.username = user.display_name;
-        comment.color = user.color;
     }
     res.render('comments', {comments: comments, user: get_user(req), 
                             next: page+1, prev: page-1, hasNext: comments.length==20});
@@ -53,7 +52,6 @@ function get_last_comments(count) {
         const userget = db.prepare('SELECT * FROM users WHERE id = ?');
         const user = userget.get(comment.user);
         comment.username = user.display_name;
-        comment.color = user.color;
     }
     return comments;
 }
