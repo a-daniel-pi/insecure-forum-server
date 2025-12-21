@@ -19,6 +19,7 @@ function get_user(req) {
             displayname: req.session.displayname,
             isLoggedIn: true,
             loginTime: req.session.loginTime,
+            color: req.session.color,
             id: req.session.userid
         };
     }
@@ -67,6 +68,7 @@ auth_router.post('/login', async (req,res) => {
         req.session.username = username;
         req.session.displayname = user.display_name;
         req.session.userid = user.id;
+        req.session.color = user.color;
         req.session.loginTime = new Date().toISOString();
         
         console.log(`User ${username} logged in at ${req.session.loginTime}`);
@@ -117,6 +119,7 @@ auth_router.post('/register', async (req, res) => {
             req.session.displayname = displayname;
             req.session.username = username;
             req.session.userid = result.lastInsertRowid;
+            req.session.color = 'black';
             req.session.loginTime = new Date().toISOString();
             res.redirect('/');
             return;
